@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Jason Yaasiel · Information Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"/></noscript>
+<style>
+:root {
+  --bg:      #070b12;
+  --bg2:     #0c1220;
+  --bg3:     #0f1729;
+  --bg4:     #111d31;
+  --border:  rgba(56,130,255,0.12);
+  --border2: rgba(56,130,255,0.22);
+  --blue:    #3882ff;
+  --blue2:   #5b9eff;
+  --blue3:   #8ab8ff;
+  --blue4:   #c2d8ff;
+  --cyan:    #00e5c8;
+  --cyan2:   rgba(0,229,200,0.7);
+  --text:    #e8edf5;
+  --text2:   #8ea4c2;
+  --text3:   #4f6a8a;
+  --grotesk: 'Space Grotesk', system-ui, sans-serif;
+  --mono:    'Space Mono', 'Courier New', monospace;
+  --ease:    cubic-bezier(0.25,0.46,0.45,0.94);
+  --spring:  cubic-bezier(0.34,1.56,0.64,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:var(--grotesk);font-weight:400;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+
+/* Grid dot bg */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(56,130,255,0.18) 1px,transparent 1px);
+  background-size:36px 36px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 100%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 100%);
+}
+
+/* Top glow */
+body::after{
+  content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:900px;height:500px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(56,130,255,0.09) 0%,transparent 70%);
+  z-index:0;pointer-events:none;
+}
+
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px}
+
+/* PROGRESS */
+#prog{position:fixed;top:0;left:0;z-index:9999;height:1.5px;width:0%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .08s linear}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  transition:background .4s var(--ease),border-color .4s;
+  border-bottom:1px solid transparent;
+}
+nav.solid{
+  background:rgba(7,11,18,0.88);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-color:var(--border);
+}
+.nav-logo{
+  font-family:var(--mono);font-size:.78rem;font-weight:700;
+  color:var(--text);letter-spacing:.02em;display:flex;align-items:center;gap:8px;
+}
+.nav-logo-bracket{color:var(--blue);font-weight:400}
+.nav-logo-dot{width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:blink 2s ease infinite}
+.nav-links{display:flex;gap:2px}
+.nav-links a{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;color:var(--text3);
+  padding:6px 14px;border-radius:4px;transition:color .2s,background .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--blue3);background:rgba(56,130,255,0.07)}
+.nav-cta{
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;padding:7px 18px;
+  border-radius:4px;background:rgba(56,130,255,0.1);color:var(--blue3);
+  border:1px solid var(--border2);cursor:pointer;
+  transition:background .2s,color .2s,transform .2s var(--spring);
+}
+.nav-cta:hover{background:var(--blue);color:#fff;transform:translateY(-1px)}
+#ham{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+#ham span{display:block;width:20px;height:1px;background:var(--text3);border-radius:1px;transition:transform .3s var(--ease),opacity .25s}
+#ham.open span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+#ham.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+#ham.open span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+
+#mob-menu{
+  position:fixed;inset:0;z-index:750;
+  background:rgba(7,11,18,0.97);backdrop-filter:blur(28px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility .3s;
+}
+#mob-menu.open{opacity:1;visibility:visible;pointer-events:all}
+#mob-menu a{
+  font-family:var(--grotesk);font-size:2rem;font-weight:600;color:var(--text3);
+  padding:10px 40px;border-radius:6px;transition:color .2s;
+}
+#mob-menu a:hover{color:var(--blue3)}
+
+/* HERO */
+#home{
+  min-height:100svh;position:relative;z-index:1;overflow:hidden;
+  display:flex;align-items:center;
+  padding:100px 48px 80px;
+}
+.hero-inner{max-width:760px;width:100%}
+
+.hero-chip{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:28px;
+  padding:6px 14px;border-radius:20px;
+  background:rgba(56,130,255,0.08);border:1px solid var(--border2);
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;color:var(--blue3);
+  opacity:0;animation:fadeUp .6s var(--ease) .1s forwards;
+}
+.chip-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.hero-name{
+  font-family:var(--grotesk);font-size:clamp(3.2rem,7vw,6.8rem);
+  font-weight:700;line-height:1;letter-spacing:-.03em;
+  margin-bottom:16px;
+  opacity:0;animation:fadeUp .8s var(--ease) .22s forwards;
+}
+.hero-name-first{color:var(--text);display:block}
+.hero-name-last{
+  display:block;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.hero-role{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;
+  color:var(--text3);margin-bottom:28px;
+  opacity:0;animation:fadeUp .7s var(--ease) .34s forwards;
+}
+.hero-role span{color:var(--blue3)}
+
+.hero-desc{
+  font-size:1rem;line-height:1.8;color:var(--text2);max-width:520px;
+  margin-bottom:36px;font-weight:300;
+  opacity:0;animation:fadeUp .7s var(--ease) .44s forwards;
+}
+.hero-desc strong{color:var(--text);font-weight:500}
+
+.hero-btns{
+  display:flex;gap:12px;flex-wrap:wrap;margin-bottom:56px;
+  opacity:0;animation:fadeUp .7s var(--ease) .54s forwards;
+}
+.btn-primary{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;
+  padding:12px 26px;border-radius:6px;
+  background:var(--blue);color:#fff;border:1px solid var(--blue);
+  cursor:pointer;transition:background .2s,transform .2s var(--spring),box-shadow .2s;
+}
+.btn-primary:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(56,130,255,0.35)}
+.btn-ghost{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;
+  padding:11px 26px;border-radius:6px;
+  background:transparent;color:var(--text2);border:1px solid var(--border2);
+  cursor:pointer;transition:border-color .2s,color .2s,transform .2s var(--spring);
+}
+.btn-ghost:hover{border-color:var(--blue3);color:var(--blue3);transform:translateY(-2px)}
+
+.hero-stats{
+  display:flex;gap:0;
+  border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;width:fit-content;
+  opacity:0;animation:fadeUp .7s var(--ease) .64s forwards;
+}
+.hstat{
+  padding:18px 28px;border-right:1px solid var(--border);
+  background:var(--bg2);transition:background .2s;
+}
+.hstat:last-child{border-right:none}
+.hstat:hover{background:var(--bg3)}
+.hstat-n{
+  font-family:var(--mono);font-size:1.4rem;font-weight:700;
+  background:linear-gradient(135deg,var(--blue3),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;display:block;line-height:1;margin-bottom:6px;
+}
+.hstat-l{font-family:var(--mono);font-size:.46rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+
+/* Floating code block — right side */
+.hero-float{
+  position:absolute;right:48px;top:50%;transform:translateY(-50%);
+  width:320px;z-index:2;
+  opacity:0;animation:fadeUp .9s var(--ease) .8s forwards;
+}
+.code-block{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 0 1px rgba(56,130,255,0.06),inset 0 1px 0 rgba(56,130,255,0.08);
+}
+.code-bar{
+  display:flex;align-items:center;gap:7px;padding:12px 16px;
+  background:rgba(0,0,0,.25);border-bottom:1px solid var(--border);
+}
+.code-dot{width:8px;height:8px;border-radius:50%}
+.code-dot.r{background:#ff5f57}.code-dot.y{background:#ffbd2e}.code-dot.g{background:#28c840}
+.code-label{font-family:var(--mono);font-size:.52rem;color:var(--text3);margin-left:auto;letter-spacing:.08em}
+.code-body{padding:18px 20px;font-family:var(--mono);font-size:.67rem;line-height:2}
+.cl{display:block}
+.c-dim{color:var(--text3)}
+.c-key{color:var(--blue3)}
+.c-str{color:#7dd3a8}
+.c-num{color:var(--cyan)}
+.c-bool{color:#c084fc}
+.c-cursor{display:inline-block;width:6px;height:12px;background:var(--cyan);margin-left:2px;animation:blink 1.1s step-end infinite;vertical-align:middle}
+
+/* MARQUEE */
+.marquee-wrap{
+  position:relative;z-index:1;overflow:hidden;white-space:nowrap;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:10px 0;background:var(--bg2);
+}
+.marquee-track{display:inline-flex;animation:marquee 36s linear infinite}
+.marquee-item{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);flex-shrink:0;padding:0 24px;
+  display:inline-flex;align-items:center;gap:24px;
+}
+.marquee-item::after{content:'//';color:var(--border2);font-family:var(--mono)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTION SCAFFOLD */
+section{padding:96px 48px;position:relative;z-index:1;overflow:hidden}
+section:nth-child(even){background:var(--bg2)}
+
+.sec-label{
+  font-family:var(--mono);font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:10px;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.sec-label::before{content:'';width:18px;height:1px;background:var(--blue)}
+.sec-num{color:var(--text3)}
+
+h2{
+  font-family:var(--grotesk);font-size:clamp(2.4rem,4.5vw,4rem);
+  font-weight:700;letter-spacing:-.03em;line-height:.95;
+  color:var(--text);margin-bottom:8px;
+}
+h2 .accent{
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.sec-rule{width:28px;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:2px;margin-top:18px;margin-bottom:52px}
+
+.rv{opacity:0;transform:translateY(24px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rl{opacity:0;transform:translateX(-24px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rr{opacity:0;transform:translateX(24px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rv.in,.rl.in,.rr.in{opacity:1;transform:none}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:72px;align-items:start}
+.about-text p{font-size:.9rem;line-height:1.9;color:var(--text2);margin-bottom:16px;font-weight:300}
+.about-text p strong{color:var(--text);font-weight:500}
+.about-text blockquote{
+  margin-top:24px;padding:16px 20px;
+  background:rgba(56,130,255,0.05);border-left:2px solid var(--blue);
+  border-radius:0 6px 6px 0;
+  font-size:.9rem;color:var(--blue3);line-height:1.6;font-style:italic;
+}
+
+.info-panel{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+}
+.info-panel-bar{
+  padding:12px 18px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:7px;
+}
+.info-panel-title{font-family:var(--mono);font-size:.52rem;color:var(--text3);margin-left:auto;letter-spacing:.08em}
+.info-row{
+  display:flex;align-items:baseline;
+  padding:9px 18px;border-bottom:1px solid var(--border);
+  transition:background .15s;
+}
+.info-row:last-child{border-bottom:none}
+.info-row:hover{background:rgba(56,130,255,0.04)}
+.info-k{font-family:var(--mono);font-size:.6rem;color:var(--blue3);width:96px;flex-shrink:0;letter-spacing:.02em}
+.info-sep{color:var(--text3);margin:0 8px;font-family:var(--mono);font-size:.6rem}
+.info-v{font-family:var(--mono);font-size:.6rem;color:var(--text2)}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sk-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;padding:26px 22px;
+  position:relative;overflow:hidden;
+  transition:border-color .3s,transform .3s var(--spring),box-shadow .3s;
+  cursor:default;
+}
+.sk-card:hover{border-color:var(--blue);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.4),0 0 0 1px rgba(56,130,255,0.15)}
+.sk-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.sk-card:hover::before{opacity:1}
+.sk-num{font-family:var(--mono);font-size:.48rem;color:var(--text3);letter-spacing:.1em;margin-bottom:16px}
+.sk-icon{font-size:1.5rem;margin-bottom:12px;display:block}
+.sk-name{font-family:var(--grotesk);font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px}
+.sk-desc{font-size:.76rem;line-height:1.7;color:var(--text2);margin-bottom:14px;font-weight:300}
+.sk-badge{
+  font-family:var(--mono);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 10px;border-radius:4px;
+  background:rgba(56,130,255,0.1);border:1px solid rgba(56,130,255,0.25);color:var(--blue3);
+  display:inline-block;
+}
+.sk-badge.muted{background:rgba(142,164,194,0.06);border-color:var(--border);color:var(--text3)}
+
+/* EDUCATION */
+.edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:40px}
+.edu-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:26px 24px;
+  transition:border-color .3s,transform .25s var(--spring);
+}
+.edu-card:hover{border-color:var(--blue);transform:translateY(-3px)}
+.edu-yr{font-family:var(--mono);font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.edu-deg{font-family:var(--grotesk);font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3}
+.edu-inst{font-family:var(--mono);font-size:.62rem;color:var(--text3);margin-bottom:16px}
+.edu-pts li{font-size:.76rem;color:var(--text2);padding-left:16px;position:relative;margin-bottom:4px;line-height:1.55;font-weight:300}
+.edu-pts li::before{content:'›';position:absolute;left:0;color:var(--blue);font-family:var(--mono);font-size:.8rem}
+
+.grade-table{width:100%;font-family:var(--mono);font-size:.62rem}
+.grade-table tr{border-bottom:1px solid var(--border)}
+.grade-table tr:last-child{border-bottom:none}
+.grade-table td{padding:7px 0;color:var(--text2);vertical-align:middle}
+.grade-table td:last-child{text-align:right;font-weight:700}
+.g-a{color:var(--cyan)}.g-b{color:var(--blue3)}
+
+.z-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.z-badge{font-family:var(--mono);font-size:.48rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:4px;background:rgba(56,130,255,0.1);border:1px solid rgba(56,130,255,0.25);color:var(--blue3)}
+.z-badge.alt{background:rgba(0,229,200,0.08);border-color:rgba(0,229,200,0.25);color:var(--cyan)}
+
+.ol-label{
+  font-family:var(--mono);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:14px;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.ol-label::before{content:'';width:16px;height:1px;background:var(--blue)}
+.ol-grid{
+  display:grid;grid-template-columns:repeat(9,1fr);
+  border:1px solid var(--border);border-radius:8px;overflow:hidden;
+  gap:1px;background:var(--border);
+}
+.g-cell{background:var(--bg3);padding:14px 6px;text-align:center;transition:background .15s}
+.g-cell:hover{background:rgba(56,130,255,0.07)}
+.g-sub{font-family:var(--mono);font-size:.42rem;color:var(--text3);margin-bottom:8px;letter-spacing:.04em}
+.g-grade{font-family:var(--grotesk);font-size:1.25rem;font-weight:700;line-height:1}
+.g-grade.A{color:var(--cyan)}.g-grade.B{color:var(--blue3)}.g-grade.C{color:var(--text3)}
+
+/* EXPERIENCE */
+.exp-list{max-width:800px;position:relative}
+.exp-list::before{
+  content:'';position:absolute;left:0;top:8px;bottom:8px;width:1px;
+  background:linear-gradient(180deg,transparent,var(--border2) 15%,var(--border2) 85%,transparent);
+}
+.exp-item{
+  display:grid;grid-template-columns:160px 1fr;gap:44px;
+  padding:36px 0;border-bottom:1px solid var(--border);position:relative;
+}
+.exp-item:last-child{border-bottom:none}
+.exp-item::after{
+  content:'';position:absolute;left:0;top:42px;transform:translateX(-50%);
+  width:7px;height:7px;border-radius:50%;
+  background:var(--blue);border:2px solid var(--bg);
+  box-shadow:0 0 0 3px var(--border2),0 0 12px rgba(56,130,255,0.4);
+  transition:box-shadow .3s,transform .3s var(--spring);
+}
+.exp-item:hover::after{box-shadow:0 0 0 8px rgba(56,130,255,0.1),0 0 20px rgba(56,130,255,0.5);transform:translateX(-50%) scale(1.4)}
+.exp-date{font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;color:var(--blue);line-height:1.9;padding-top:4px;padding-left:22px}
+.exp-role{font-family:var(--grotesk);font-size:1.2rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.exp-org{font-family:var(--mono);font-size:.62rem;color:var(--text3);margin-bottom:14px}
+.exp-bullets li{font-size:.82rem;line-height:1.75;color:var(--text2);padding-left:18px;position:relative;margin-bottom:6px;font-weight:300}
+.exp-bullets li::before{content:'';position:absolute;left:0;top:10px;width:8px;height:1px;background:var(--blue)}
+
+/* PROJECTS */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.proj-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;padding:28px 24px;position:relative;overflow:hidden;
+  transition:border-color .3s,transform .3s var(--spring),box-shadow .3s;
+}
+.proj-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),transparent);
+}
+.proj-card:hover{border-color:rgba(56,130,255,0.35);transform:translateY(-5px);box-shadow:0 20px 52px rgba(0,0,0,.4),0 0 0 1px rgba(56,130,255,0.1)}
+.proj-n{font-family:var(--mono);font-size:.48rem;letter-spacing:.12em;color:var(--text3);margin-bottom:14px;display:block}
+.proj-card h3{font-family:var(--grotesk);font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:10px}
+.proj-card p{font-size:.8rem;line-height:1.75;color:var(--text2);font-weight:300}
+.proj-tag{
+  display:inline-block;margin-top:16px;
+  font-family:var(--mono);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 12px;border-radius:4px;
+  background:rgba(56,130,255,0.1);border:1px solid rgba(56,130,255,0.25);color:var(--blue3);
+}
+.proj-placeholder{opacity:.45}
+.proj-placeholder:hover{transform:none;box-shadow:none}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:72px;align-items:start}
+.avail-badge{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;
+  padding:6px 14px;border-radius:20px;
+  background:rgba(0,229,200,0.07);border:1px solid rgba(0,229,200,0.2);
+  font-family:var(--mono);font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);
+}
+.avail-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;animation:blink 2.2s ease infinite}
+
+.contact-hl{
+  font-family:var(--grotesk);
+  font-size:clamp(2.8rem,5.5vw,5.2rem);
+  font-weight:700;letter-spacing:-.03em;line-height:.92;
+  color:var(--text);margin-bottom:22px;
+}
+.contact-hl em{
+  font-style:normal;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.contact-sub{font-size:.88rem;line-height:1.8;color:var(--text2);max-width:360px;font-weight:300}
+
+.c-links{display:flex;flex-direction:column;gap:8px}
+.c-item{
+  display:flex;align-items:center;gap:14px;padding:14px 18px;
+  border-radius:8px;border:1px solid var(--border);background:var(--bg3);
+  transition:border-color .22s,background .22s,transform .22s var(--spring),box-shadow .22s;
+}
+.c-item:hover{border-color:var(--blue);background:rgba(56,130,255,0.05);transform:translateX(5px);box-shadow:0 4px 20px rgba(56,130,255,0.1)}
+.c-icon-wrap{
+  width:36px;height:36px;flex-shrink:0;border-radius:6px;
+  background:rgba(56,130,255,0.1);border:1px solid rgba(56,130,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.72rem;color:var(--blue3);
+  transition:background .22s;
+}
+.c-item:hover .c-icon-wrap{background:rgba(56,130,255,0.2)}
+.c-lbl{font-family:var(--mono);font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:2px}
+.c-val{font-family:var(--grotesk);font-size:.82rem;color:var(--text);font-weight:400}
+
+/* FOOTER */
+footer{
+  padding:22px 48px;background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--mono);font-size:.54rem;letter-spacing:.06em;color:var(--text3);
+  position:relative;z-index:1;
+}
+.f-logo{font-family:var(--grotesk);font-size:.88rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
+.f-logo span{background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.f-links{display:flex;gap:18px}
+.f-links a{color:var(--text3);transition:color .2s}
+.f-links a:hover{color:var(--blue3)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .hero-float{display:none}
+  .hero-inner{max-width:100%}
+}
+@media(max-width:960px){
+  nav{padding:0 20px}
+  .nav-links,.nav-cta{display:none}
+  #ham{display:flex}
+  section{padding:72px 24px}
+  #home{padding:86px 24px 64px}
+  .about-grid{grid-template-columns:1fr;gap:32px}
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .edu-grid{grid-template-columns:1fr}
+  .exp-item{grid-template-columns:1fr;gap:8px}
+  .exp-item::after,.exp-list::before{display:none}
+  .exp-date{padding-left:0}
+  .contact-grid{grid-template-columns:1fr;gap:36px}
+  .ol-grid{grid-template-columns:repeat(5,1fr)}
+  footer{flex-direction:column;gap:8px;text-align:center;padding:16px}
+}
+@media(max-width:560px){
+  nav{padding:0 14px;height:54px}
+  section{padding:56px 16px}
+  #home{padding:80px 16px 48px}
+  .skills-grid{grid-template-columns:1fr}
+  .proj-grid{grid-template-columns:1fr}
+  .ol-grid{grid-template-columns:repeat(3,1fr)}
+  .hero-stats{flex-direction:column;width:100%}
+  .hstat{border-right:none;border-bottom:1px solid var(--border)}
+  .hstat:last-child{border-bottom:none}
+  h2{font-size:2.2rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.1ms!important}
+  .rv,.rl,.rr{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<div id="mob-menu">
+  <a href="#home" class="mob-link">home</a>
+  <a href="#about" class="mob-link">about</a>
+  <a href="#skills" class="mob-link">skills</a>
+  <a href="#education" class="mob-link">education</a>
+  <a href="#experience" class="mob-link">experience</a>
+  <a href="#projects" class="mob-link">projects</a>
+  <a href="#contact" class="mob-link">contact</a>
+</div>
+
+<nav id="nav">
+  <a href="#home" class="nav-logo">
+    <span class="nav-logo-bracket">[</span>jason<span class="nav-logo-bracket">]</span>
+    <span class="nav-logo-dot"></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">home</a></li>
+    <li><a href="#about">about</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#education">education</a></li>
+    <li><a href="#experience">experience</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+  <a href="mailto:jasonyaasielofficial@gmail.com" class="nav-cta">open to work</a>
+  <button id="ham" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-inner">
+    <div class="hero-chip">
+      <span class="chip-dot"></span>
+      Information Systems · Sabaragamuwa University of Sri Lanka
+    </div>
+    <h1 class="hero-name">
+      <span class="hero-name-first">Jason</span>
+      <span class="hero-name-last">Yaasiel</span>
+    </h1>
+    <div class="hero-role">
+      Cybersecurity &nbsp;<span>·</span>&nbsp; Computer Networking &nbsp;<span>·</span>&nbsp; Systems
+    </div>
+    <p class="hero-desc">
+      Undergraduate at <strong>Sabaragamuwa University of Sri Lanka</strong>, driven by curiosity for
+      <strong>cybersecurity, networking, and real-world systems.</strong>
+      Building a strong foundation through certified training and hands-on leadership.
+    </p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Get in Touch</a>
+      <a href="#education" class="btn-ghost">View Qualifications →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat">
+        <span class="hstat-n" data-target="2" data-dec="0">2</span>
+        <span class="hstat-l">Certifications</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-n" data-target="127" data-dec="0">127</span>
+        <span class="hstat-l">District Rank</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-n" data-target="1.2644" data-dec="4">1.2644</span>
+        <span class="hstat-l">Z-Score</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-float">
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dot r"></div>
+        <div class="code-dot y"></div>
+        <div class="code-dot g"></div>
+        <span class="code-label">profile.json</span>
+      </div>
+      <div class="code-body">
+        <span class="cl"><span class="c-dim">{</span></span>
+        <span class="cl">&nbsp;&nbsp;<span class="c-key">"university"</span><span class="c-dim">:</span> <span class="c-str">"SUSL"</span><span class="c-dim">,</span></span>
+        <span class="cl">&nbsp;&nbsp;<span class="c-key">"degree"</span><span class="c-dim">:</span> <span class="c-str">"B.Sc. Hons — IS"</span><span class="c-dim">,</span></span>
+        <span class="cl">&nbsp;&nbsp;<span class="c-key">"certifications"</span><span class="c-dim">:</span> <span class="c-num">2</span><span class="c-dim">,</span></span>
+        <span class="cl">&nbsp;&nbsp;<span class="c-key">"z_score"</span><span class="c-dim">:</span> <span class="c-num">1.2644</span><span class="c-dim">,</span></span>
+        <span class="cl">&nbsp;&nbsp;<span class="c-key">"open_to_work"</span><span class="c-dim">:</span> <span class="c-bool">true</span><span class="c-dim">,</span></span>
+        <span class="cl">&nbsp;&nbsp;<span class="c-key">"location"</span><span class="c-dim">:</span> <span class="c-str">"Batticaloa, LK"</span></span>
+        <span class="cl"><span class="c-dim">}</span><span class="c-cursor"></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">Cybersecurity</span>
+    <span class="marquee-item">Computer Networking</span>
+    <span class="marquee-item">Information Systems</span>
+    <span class="marquee-item">Leadership</span>
+    <span class="marquee-item">Community Service</span>
+    <span class="marquee-item">Sabaragamuwa University</span>
+    <span class="marquee-item">Batticaloa · Sri Lanka</span>
+    <span class="marquee-item">Cybersecurity</span>
+    <span class="marquee-item">Computer Networking</span>
+    <span class="marquee-item">Information Systems</span>
+    <span class="marquee-item">Leadership</span>
+    <span class="marquee-item">Community Service</span>
+    <span class="marquee-item">Sabaragamuwa University</span>
+    <span class="marquee-item">Batticaloa · Sri Lanka</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="rv">
+    <div class="sec-label"><span class="sec-num">01 /</span> Profile</div>
+    <h2>About <span class="accent">Me</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text rl">
+      <p>I'm <strong>Jason Yaasiel</strong>, an Information Systems undergraduate at Sabaragamuwa University of Sri Lanka (SUSL), Academic Year 2024/25. I'm driven by a curiosity for how technology solves real-world problems — especially in <strong>cybersecurity, databases, and software systems</strong>.</p>
+      <p>My technical foundation includes completed certifications in <strong>Cybersecurity</strong> and <strong>Computer Networking</strong> from IVTC Campus. I'm continuously growing my programming and systems knowledge through university studies.</p>
+      <p>Beyond tech, I value leadership and service. As a <strong>School Prefect</strong> at St. Michael's College and a member of the <strong>Lions Club of Batticaloa Supreme</strong>, I've built communication and teamwork skills I carry into every project.</p>
+      <blockquote>Curiosity-led. Systems-focused. Ready to build what matters.</blockquote>
+    </div>
+    <div class="info-panel rr">
+      <div class="info-panel-bar">
+        <div class="code-dot r"></div>
+        <div class="code-dot y"></div>
+        <div class="code-dot g"></div>
+        <span class="info-panel-title">personal_info.json</span>
+      </div>
+      <div class="info-row"><span class="info-k">nationality</span><span class="info-sep">:</span><span class="info-v">Sri Lankan Tamil</span></div>
+      <div class="info-row"><span class="info-k">gender</span><span class="info-sep">:</span><span class="info-v">Male</span></div>
+      <div class="info-row"><span class="info-k">school</span><span class="info-sep">:</span><span class="info-v">St. Michael's College</span></div>
+      <div class="info-row"><span class="info-k">linkedin</span><span class="info-sep">:</span><span class="info-v">linkedin.com/in/jasonyaasiel</span></div>
+      <div class="info-row"><span class="info-k">email</span><span class="info-sep">:</span><span class="info-v">jasonyaasielofficial@gmail.com</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="rv">
+    <div class="sec-label"><span class="sec-num">02 /</span> Expertise</div>
+    <h2>Technical <span class="accent">Skills</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="skills-grid rv">
+    <div class="sk-card">
+      <div class="sk-num">// 01</div>
+      <div class="sk-icon">🛡️</div>
+      <div class="sk-name">Cybersecurity</div>
+      <p class="sk-desc">Solid understanding of cybersecurity fundamentals from a 3-month certification at IVTC Campus.</p>
+      <span class="sk-badge">Certified · IVTC</span>
+    </div>
+    <div class="sk-card">
+      <div class="sk-num">// 02</div>
+      <div class="sk-icon">🌐</div>
+      <div class="sk-name">Computer Networking</div>
+      <p class="sk-desc">Solid understanding of networking fundamentals from a 3-month certification at IVTC Campus.</p>
+      <span class="sk-badge">Certified · IVTC</span>
+    </div>
+    <div class="sk-card">
+      <div class="sk-num">// 03</div>
+      <div class="sk-icon">🗄️</div>
+      <div class="sk-name">ICT &amp; Databases</div>
+      <p class="sk-desc">Strong foundation in ICT and database concepts through A/L and university coursework.</p>
+      <span class="sk-badge muted">A/L ICT · SQL Basics</span>
+    </div>
+    <div class="sk-card">
+      <div class="sk-num">// 04</div>
+      <div class="sk-icon">👥</div>
+      <div class="sk-name">Leadership</div>
+      <p class="sk-desc">Proven through school prefect duties, event organisation, and Lions Club community service.</p>
+      <span class="sk-badge muted">Team · Communication</span>
+    </div>
+    <div class="sk-card">
+      <div class="sk-num">// 05</div>
+      <div class="sk-icon">⚡</div>
+      <div class="sk-name">More Coming Soon</div>
+      <p class="sk-desc">Actively expanding skill set through university studies and personal projects.</p>
+      <span class="sk-badge muted">In Progress</span>
+    </div>
+    <div class="sk-card">
+      <div class="sk-num">// 06</div>
+      <div class="sk-icon">🔮</div>
+      <div class="sk-name">More Coming Soon</div>
+      <p class="sk-desc">Actively expanding skill set through university studies and personal projects.</p>
+      <span class="sk-badge muted">In Progress</span>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="rv">
+    <div class="sec-label"><span class="sec-num">03 /</span> Qualifications</div>
+    <h2>Education &amp; <span class="accent">Certifications</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="edu-grid rv">
+    <div class="edu-card">
+      <div class="edu-yr">2026 — Present</div>
+      <div class="edu-deg">B.Sc. (Hons) in Information Systems</div>
+      <div class="edu-inst">Sabaragamuwa University of Sri Lanka</div>
+      <ul class="edu-pts"><li>2024/25 Academic Year</li></ul>
+    </div>
+    <div class="edu-card">
+      <div class="edu-yr">G.C.E. Advanced Level · 2024 Batch</div>
+      <div class="edu-deg">Commerce Stream</div>
+      <div class="edu-inst">St. Michael's College National School, Batticaloa</div>
+      <table class="grade-table">
+        <tbody>
+          <tr><td>Economics</td><td class="g-b">B</td></tr>
+          <tr><td>Accounting</td><td class="g-b">B</td></tr>
+          <tr><td>ICT</td><td class="g-b">B</td></tr>
+          <tr><td>General English</td><td class="g-b">B</td></tr>
+          <tr><td>Common General Test</td><td class="g-b">044</td></tr>
+          <tr><td>GIT</td><td class="g-a">A</td></tr>
+        </tbody>
+      </table>
+      <div class="z-badges">
+        <span class="z-badge">Z-Score 1.2644</span>
+        <span class="z-badge">District Rank #127</span>
+        <span class="z-badge alt">Island Rank #6555</span>
+      </div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-yr">Completed</div>
+      <div class="edu-deg">Cybersecurity — 3 Months</div>
+      <div class="edu-inst">IVTC Campus · Professional Certification</div>
+      <ul class="edu-pts"><li>Fundamentals of Cybersecurity</li></ul>
+    </div>
+    <div class="edu-card">
+      <div class="edu-yr">Completed</div>
+      <div class="edu-deg">Computer Networking — 3 Months</div>
+      <div class="edu-inst">IVTC Campus · Professional Certification</div>
+      <ul class="edu-pts"><li>Fundamentals of Computer Networking</li></ul>
+    </div>
+  </div>
+
+  <div class="ol-wrap rv">
+    <div class="ol-label">G.C.E. Ordinary Level · 2021 (2022)</div>
+    <div class="ol-grid">
+      <div class="g-cell"><div class="g-sub">Religion</div><div class="g-grade A">A</div></div>
+      <div class="g-cell"><div class="g-sub">Tamil</div><div class="g-grade A">A</div></div>
+      <div class="g-cell"><div class="g-sub">Mathematics</div><div class="g-grade A">A</div></div>
+      <div class="g-cell"><div class="g-sub">English</div><div class="g-grade A">A</div></div>
+      <div class="g-cell"><div class="g-sub">H.P.E.</div><div class="g-grade A">A</div></div>
+      <div class="g-cell"><div class="g-sub">Science</div><div class="g-grade C">C</div></div>
+      <div class="g-cell"><div class="g-sub">History</div><div class="g-grade C">C</div></div>
+      <div class="g-cell"><div class="g-sub">Tamil Lit.</div><div class="g-grade C">C</div></div>
+      <div class="g-cell"><div class="g-sub">Sinhala</div><div class="g-grade C">C</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="rv">
+    <div class="sec-label"><span class="sec-num">04 /</span> Leadership</div>
+    <h2>Experience &amp; <span class="accent">Activities</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="exp-list rv">
+    <div class="exp-item">
+      <div class="exp-date">Jan 2026<br>→ Present</div>
+      <div>
+        <div class="exp-role">Student Member</div>
+        <div class="exp-org">Lions Club of Batticaloa Supreme</div>
+        <ul class="exp-bullets">
+          <li>Serving as <strong>New Voice &amp; IT</strong> — nominated for 2026–2027 Lionistic Year</li>
+          <li>Actively involved in community service and volunteer initiatives</li>
+          <li>Participated in team-based projects and social impact programmes</li>
+          <li>Developed leadership, teamwork, and communication skills</li>
+        </ul>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-date">2023<br>→ 2024</div>
+      <div>
+        <div class="exp-role">School Prefect</div>
+        <div class="exp-org">St. Michael's College National School, Batticaloa</div>
+        <ul class="exp-bullets">
+          <li>Maintained discipline and supported school administration</li>
+          <li>Assisted in organising school events and student activities</li>
+          <li>Demonstrated leadership and conflict-resolution skills daily</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="rv">
+    <div class="sec-label"><span class="sec-num">05 /</span> Work</div>
+    <h2>Featured <span class="accent">Projects</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="proj-grid rv">
+    <div class="proj-card">
+      <span class="proj-n">// project_01</span>
+      <h3>Portfolio Website</h3>
+      <p>Designed and built this personal portfolio from scratch — iterated through multiple versions with a clear aesthetic direction and structured layout.</p>
+      <span class="proj-tag">Web Dev</span>
+    </div>
+    <div class="proj-card proj-placeholder">
+      <span class="proj-n">// project_02</span>
+      <h3>Coming Soon</h3>
+      <p>More projects will be added as university work and personal builds progress.</p>
+      <span class="proj-tag">In Progress</span>
+    </div>
+    <div class="proj-card proj-placeholder">
+      <span class="proj-n">// project_03</span>
+      <h3>Coming Soon</h3>
+      <p>More projects will be added as university work and personal builds progress.</p>
+      <span class="proj-tag">In Progress</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="rv">
+    <div class="sec-label"><span class="sec-num">06 /</span> Contact</div>
+    <h2>Get in <span class="accent">Touch</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="contact-grid">
+    <div class="rl">
+      <div class="avail-badge"><span class="avail-dot"></span>Open to Opportunities</div>
+      <div class="contact-hl">LET'S<br>WORK<br><em>TOGETHER.</em></div>
+      <p class="contact-sub">Open to internships, collaborations, and conversations in IT and cybersecurity. Feel free to reach out via any channel below.</p>
+    </div>
+    <div class="c-links rr">
+      <a href="mailto:jasonyaasielofficial@gmail.com" class="c-item">
+        <div class="c-icon-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        </div>
+        <div><span class="c-lbl">email</span><span class="c-val">jasonyaasielofficial@gmail.com</span></div>
+      </a>
+      <a href="tel:+94773774288" class="c-item">
+        <div class="c-icon-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div><span class="c-lbl">phone</span><span class="c-val">+94 77 377 4288</span></div>
+      </a>
+      <a href="https://linkedin.com/in/jasonyaasiel" target="_blank" rel="noopener noreferrer" class="c-item">
+        <div class="c-icon-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </div>
+        <div><span class="c-lbl">linkedin</span><span class="c-val">linkedin.com/in/jasonyaasiel</span></div>
+      </a>
+      <a href="https://instagram.com/jasonyaasiel" target="_blank" rel="noopener noreferrer" class="c-item">
+        <div class="c-icon-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div><span class="c-lbl">instagram</span><span class="c-val">@jasonyaasiel</span></div>
+      </a>
+      <a href="https://facebook.com/jasonyaasiel97" target="_blank" rel="noopener noreferrer" class="c-item">
+        <div class="c-icon-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </div>
+        <div><span class="c-lbl">facebook</span><span class="c-val">@jasonyaasiel97</span></div>
+      </a>
+      <div class="c-item" style="cursor:default">
+        <div class="c-icon-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div><span class="c-lbl">location</span><span class="c-val">Batticaloa, Sri Lanka</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="f-logo">Jason <span>Yaasiel</span></span>
+  <span>Batticaloa, Sri Lanka</span>
+  <div class="f-links">
+    <a href="mailto:jasonyaasielofficial@gmail.com">email</a>
+    <a href="https://linkedin.com/in/jasonyaasiel" target="_blank">linkedin</a>
+    <a href="https://instagram.com/jasonyaasiel" target="_blank">instagram</a>
+    <a href="https://facebook.com/jasonyaasiel97" target="_blank">facebook</a>
+  </div>
+  <span>© 2026 · Built by Jason Yaasiel</span>
+</footer>
+
+<script>
+/* Progress + Nav */
+const prog=document.getElementById('prog'),nav=document.getElementById('nav');
+let ticking=false;
+window.addEventListener('scroll',()=>{
+  if(!ticking){
+    requestAnimationFrame(()=>{
+      const sy=window.scrollY,max=document.documentElement.scrollHeight-window.innerHeight;
+      prog.style.width=(sy/max*100)+'%';
+      nav.classList.toggle('solid',sy>40);
+      const sections=document.querySelectorAll('section[id]');
+      let current='';
+      sections.forEach(s=>{if(sy+80>=s.offsetTop)current=s.id});
+      document.querySelectorAll('.nav-links a').forEach(a=>{
+        a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+      });
+      ticking=false;
+    });
+    ticking=true;
+  }
+},{passive:true});
+
+/* Hamburger */
+const ham=document.getElementById('ham'),mob=document.getElementById('mob-menu');
+ham.addEventListener('click',()=>{
+  const o=ham.classList.toggle('open');
+  ham.setAttribute('aria-expanded',String(o));
+  mob.classList.toggle('open',o);
+  document.body.style.overflow=o?'hidden':'';
+});
+document.querySelectorAll('.mob-link').forEach(a=>a.addEventListener('click',()=>{
+  ham.classList.remove('open');ham.setAttribute('aria-expanded','false');
+  mob.classList.remove('open');document.body.style.overflow='';
+}));
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&mob.classList.contains('open')){
+    ham.classList.remove('open');ham.setAttribute('aria-expanded','false');
+    mob.classList.remove('open');document.body.style.overflow='';
+  }
+});
+
+/* Scroll Reveal */
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('in'),i*55);
+      revealObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.07,rootMargin:'0px 0px -16px 0px'});
+document.querySelectorAll('.rv,.rl,.rr').forEach(el=>revealObs.observe(el));
+
+/* Count-up */
+function countUp(el){
+  const target=parseFloat(el.dataset.target),dec=parseInt(el.dataset.dec,10)||0;
+  const dur=1400,t0=performance.now(),ease=t=>1-Math.pow(1-t,3);
+  (function run(now){
+    const p=Math.min((now-t0)/dur,1);
+    el.textContent=(ease(p)*target).toFixed(dec);
+    if(p<1)requestAnimationFrame(run);
+  })(t0);
+}
+const statObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.querySelectorAll('[data-target]').forEach(countUp);statObs.unobserve(e.target);}
+  });
+},{threshold:0.3});
+document.querySelectorAll('.hero-stats').forEach(el=>statObs.observe(el));
+</script>
+</body>
+</html>
